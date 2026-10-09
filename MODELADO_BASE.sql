@@ -1,17 +1,6 @@
--- =====================================================================
--- Proyecto Colegio (MySQL) - Modelado completo corregido
--- Incluye las correcciones acordadas:
---  1) CURSO_GRUPO enlazada a CURSO
---  2) ASIGNATURA_CURSO y ALUMNO_CURSO apuntan ambas a CURSO (no entre sí)
---  3) ASIGNATURA_PROFESOR sin la FK inválida en ASP_GRUPO
---  4) EJERCICIO con PK correcta (EJERCICIO_ID) y columna de texto de pregunta
---  5) CIRCULAR_TUTOR enlazada a TUTOR (no a PROFESOR) y con estado S/N
--- =====================================================================
+
 SET FOREIGN_KEY_CHECKS = 0;
 
--- ---------------------------------------------------------------------
--- 1. TABLAS INDEPENDIENTES
--- ---------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS CURSO(
     CURSO_ID INT AUTO_INCREMENT NOT NULL,
@@ -63,9 +52,6 @@ CREATE TABLE IF NOT EXISTS PARENTESCO(
     PRIMARY KEY(PARENTESCO_ALUMNO, PARENTESCO_TUTOR)
 );
 
--- ---------------------------------------------------------------------
--- 2. PROFESOR
--- ---------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS PROFESOR(
     PROFESOR_ID INT,
@@ -86,9 +72,6 @@ CREATE TABLE IF NOT EXISTS PROFESOR(
       REFERENCES CURSO(CURSO_ID)
 );
 
--- ---------------------------------------------------------------------
--- 3. ASIGNATURA Y ALUMNO (ambas apuntan a CURSO, no entre sí)
--- ---------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS ASIGNATURA(
     ASIGNATURA_ID INT AUTO_INCREMENT NOT NULL,
@@ -121,9 +104,6 @@ CREATE TABLE IF NOT EXISTS ALUMNO(
       REFERENCES CURSO(CURSO_ID)
 );
 
--- ---------------------------------------------------------------------
--- 4. TABLAS DEPENDIENTES Y RELACIONALES
--- ---------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS ASIGNATURA_ALUMNO(
     AAL_ASIGNATURA INT NOT NULL,
@@ -142,8 +122,6 @@ CREATE TABLE IF NOT EXISTS ASIGNATURA_ALUMNO(
         ON DELETE CASCADE
 );
 
--- Nota: ASP_GRUPO se guarda como letra (A/B) sin FK hacia CURSO_GRUPO,
--- porque CURSO_GRUPO usa un ID numérico interno (GRUPO_ID) distinto de la letra.
 CREATE TABLE IF NOT EXISTS ASIGNATURA_PROFESOR (
     ASP_ASIGNATURA INT NOT NULL,
     ASP_CURSO INT NOT NULL,
@@ -168,7 +146,6 @@ CREATE TABLE IF NOT EXISTS ASIGNATURA_PROFESOR (
     ON DELETE CASCADE
 );
 
--- CIRCULAR_TUTOR enlaza circulares con TUTOR (destinatarios reales) e incluye estado de lectura
 CREATE TABLE IF NOT EXISTS CIRCULAR_TUTOR(
     CIRCULAR_ID INT NOT NULL,
     TUTOR_ID INT NOT NULL,
@@ -187,8 +164,6 @@ CREATE TABLE IF NOT EXISTS CIRCULAR_TUTOR(
         ON DELETE CASCADE
 );
 
--- EJERCICIO_ID es la PK (columna AUTO_INCREMENT); se agregó EJERCICIO_PREGUNTA_TEXTO
--- y las URL ahora permiten NULL, ya que los datos del proyecto no siempre las incluyen
 CREATE TABLE IF NOT EXISTS EJERCICIO(
     EJERCICIO_ID INT AUTO_INCREMENT NOT NULL,
     ASIGNATURA_ID INT NOT NULL,
